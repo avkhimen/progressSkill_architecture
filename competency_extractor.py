@@ -12,35 +12,6 @@ api_key = os.getenv('OPENAI_API_KEY')
 
 chat_llm = ChatOpenAI(name='gpt-4')
 
-template_string = """You are a master branding consulatant who specializes in naming brands. \
-You come up with catchy and memorable brand names.
-
-Take the brand description below delimited by triple backticks and use it to create the name for a brand.
-
-brand description: ```{brand_description}```
-
-then based on the description and you hot new brand name give the brand a score 1-10 for how likely it is to succeed.
-
-Format the output as JSON with the following keys:
-brand_name
-likelihood_of_success
-reasoning
-"""
-
-prompt_template = ChatPromptTemplate.from_template(template_string)
-
-branding_messages = prompt_template.format_messages(brand_description="a cool hip new sneaker brand aimed at rich kids")
-
-consultant_response = chat_llm(branding_messages)
-
-print(type(consultant_response.content))
-
-rjs = json.loads(consultant_response.content)
-
-print(rjs)
-
-print('---------------------------------------')
-
 schema = ResponseSchema(name="skill_competencies",
                         description="This is the competencies of the skills in python list format")
 
@@ -49,8 +20,6 @@ response_schemas = [schema]
 output_parser = StructuredOutputParser.from_response_schemas(response_schemas)
 
 format_instructions = output_parser.get_format_instructions()
-
-print(format_instructions)
 
 template_string = """You are a master skill evaluator who evaluates skills from the job ads who \
 decides whether the skill required is junior in competency, intermediate, or senior.
@@ -160,13 +129,7 @@ messages = prompt.format_messages(job_ad=job_ad_description,
                                   skills_list="[mechanical engineering, drafting, HVAC, plumbing codes]",
                                   format_instructions=format_instructions)
 
-print(messages)
-
-print(messages[0].content)
-
 response = chat_llm(messages)
-
-print(response)
 
 response_as_dict = output_parser.parse(response.content)
 
